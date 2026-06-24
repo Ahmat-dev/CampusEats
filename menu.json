@@ -1,0 +1,6 @@
+[
+  {"id": 1, "name": "Nasi Lemak Ayam Regular", "price": 5.50, "category": "Rice", "description": "Crispy chicken, fragrant coconut rice, signature sambal."},
+  {"id": 2, "name": "Mee Goreng Mamak", "price": 4.50, "category": "Noodles", "description": "Wok-fried local noodles spiced with sweet soy paste."},
+  {"id": 3, "name": "Teh Ais Kaw", "price": 2.00, "category": "Drinks", "description": "Frothy, thick local iced pulled tea with condensed milk."},
+  {"id": 4, "name": "Keropok Lekor Crispy", "price": 3.00, "category": "Snacks", "description": "Authentic crispy fish crackers served with sweet chili sauce."}
+]
