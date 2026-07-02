@@ -15,30 +15,30 @@
       <div class="footer-tag">Group Apex • PR2 Prototype Build</div>
     </main>
 
-    <VendorDashboardView 
-      v-if="currentScreen === 'vendors'" 
-      :vendors="vendorsList" 
-      @select-vendor="selectVendor" 
+    <VendorDashboardView
+      v-if="currentScreen === 'vendors'"
+      :vendors="vendorsList"
+      @select-vendor="selectVendor"
     />
 
-    <VendorMenuView 
-      v-if="currentScreen === 'menu'" 
-      :vendor="selectedVendorObj" 
+    <VendorMenuView
+      v-if="currentScreen === 'menu'"
+      :vendor="selectedVendorObj"
       :menuItems="menuItems"
       @go-back="currentScreen = 'vendors'"
       @go-checkout="navigateToCheckout"
     />
 
-    <CheckoutView 
-      v-if="currentScreen === 'checkout'" 
+    <CheckoutView
+      v-if="currentScreen === 'checkout'"
       v-model="selectedSlot"
       @go-back="currentScreen = 'menu'"
       @confirm-order="handleCheckout"
     />
 
-    <LoginView 
-      v-if="currentScreen === 'login'" 
-      @login-success="currentScreen = 'vendors'" 
+    <LoginView
+      v-if="currentScreen === 'login'"
+      @login-success="currentScreen = 'vendors'"
     />
 
     <main v-if="currentScreen === 'success'" class="success-screen">
@@ -68,6 +68,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import api from '../api';
 import { useCartStore } from '../stores/cart'; // Adjusted path to step out of views/ folder
 import VendorDashboardView from './VendorDashboardView.vue'; // Adjusted path since they are in the same folder
 import VendorMenuView from './VendorMenuView.vue';
