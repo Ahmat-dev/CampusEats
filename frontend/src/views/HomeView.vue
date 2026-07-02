@@ -69,8 +69,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from '../api';
-import { useCartStore } from '../stores/cart'; // Adjusted path to step out of views/ folder
-import VendorDashboardView from './VendorDashboardView.vue'; // Adjusted path since they are in the same folder
+import { useCartStore } from '../stores/cart';
+import VendorDashboardView from './VendorDashboardView.vue';
 import VendorMenuView from './VendorMenuView.vue';
 import CheckoutView from './CheckoutView.vue';
 import LoginView from './LoginView.vue';
@@ -83,41 +83,56 @@ const menuItems = ref([]);
 const selectedSlot = ref('12:30 PM - 12:45 PM');
 const finalSummary = ref({ total: '0.00', count: 0 });
 
-onMounted(() => {
-  fetch('mocks/vendors.json')
-    .then(res => res.json())
-    .then(data => vendorsList.value = data)
-    .catch(() => {
-      vendorsList.value = [
-        { name: "Kak Lah Nasi Lemak", location: "UTM Arkib Merdeka", rating: "4.8", wait_time: "15 mins" },
-        { name: "Sheikh Chicken Rice", location: "UTM Hub Student Cafe", rating: "4.6", wait_time: "10 mins" }
-      ];
-    });
-
-  fetch('mocks/menu.json')
-    .then(res => res.json())
-    .then(data => menuItems.value = data)
-    .catch(() => {
-      menuItems.value = [
-        { id: 1, name: "Nasi Lemak Ayam Regular", price: 5.50, category: "Rice", description: "Crispy chicken, fragrant coconut rice." },
-        { id: 2, name: "Teh Ais Kaw", price: 2.00, category: "Drinks", description: "Frothy, thick local iced pulled tea." }
-      ];
-    });
+onMounted(async () => {
+  try {
+    const vendorRes = await api.get('/api/vendors');
+    vendorsList.value = vendorRes.data;
+  } catch (error) {
+    console.error("API Connection Error:", error);
+    alert("Cannot connect to the live database.");
+  }
 });
 
-const selectVendor = (vendor) => {
+const selectVendor = async (vendor) => {
   selectedVendorObj.value = vendor;
   cartStore.clearCart();
-  currentScreen.value = 'menu';
+
+  try {
+    const menuRes = await api.get(`/api/vendors/${vendor.id}/menu-items`);
+    menuItems.value = menuRes.data;
+    currentScreen.value = 'menu';
+  } catch (error) {
+    console.error("Menu Fetch Error:", error);
+    alert("Failed to load the menu for this vendor.");
+  }
 };
 
 const navigateToCheckout = () => {
   if (cartStore.totalCount > 0) currentScreen.value = 'checkout';
 };
 
-const handleCheckout = () => {
-  finalSummary.value = { total: cartStore.cartTotal, count: cartStore.totalCount };
-  currentScreen.value = 'success';
+const handleCheckout = async () => {
+  try {
+    const payload = {
+      vendor_id: selectedVendorObj.value.id,
+      pickup_at: selectedSlot.value,
+      total: cartStore.cartTotal,
+      items: cartStore.items.map(item => ({
+        menu_item_id: item.id,
+        qty: item.qty,
+        unit_price: item.price
+      }))
+    };
+
+    await api.post('/api/orders', payload);
+
+    finalSummary.value = { total: cartStore.cartTotal, count: cartStore.totalCount };
+    currentScreen.value = 'success';
+
+  } catch (error) {
+    console.error("Order Submission Error:", error);
+    alert("Failed to submit the order.");
+  }
 };
 
 const resetToDashboard = () => {
@@ -144,7 +159,7 @@ header { background: #ffffff; padding: 1rem; display: flex; justify-content: spa
 .welcome-heading { font-size: 2.25rem; font-weight: 900; color: #059669; margin: 0 0 0.5rem 0; letter-spacing: -0.03em; }
 .welcome-text { font-size: 0.95rem; color: #4b5563; line-height: 1.5; max-width: 280px; margin: 0; }
 .btn-start { background: #059669; color: white; width: 100%; border: none; padding: 1.15rem; border-radius: 1rem; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(5,150,105,0.3); margin-top: 2rem; box-sizing: border-box; }
-.footer-tag { margin-top: auto; font-size: 0.7 gram; color: #9ca3af; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+.footer-tag { margin-top: auto; font-size: 0.7rem; color: #9ca3af; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
 .success-screen { padding: 2.5rem 1.5rem; flex: 1; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; }
 .receipt-box { border: 1px solid #e5e7eb; border-radius: 1rem; width: 100%; background: #f9fafb; padding: 1.25rem; box-sizing: border-box; text-align: left; margin-bottom: 2rem; }
 .receipt-header { font-size: 0.75rem; color: #6b7280; font-weight: bold; text-transform: uppercase; border-bottom: 1px dashed #d1d5db; padding-bottom: 0.5rem; margin-bottom: 0.75rem; }

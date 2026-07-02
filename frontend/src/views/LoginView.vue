@@ -3,16 +3,45 @@
     <div style="font-size: 3.5rem; margin-bottom: 1rem;">🔐</div>
     <h2 style="font-size: 1.5rem; font-weight: 800; color: #059669; margin: 0 0 0.5rem 0;">Student Portal Login</h2>
     <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 1.5rem;">Access CampusEats pre-orders using your UTM ID</p>
-    
-    <input type="text" placeholder="UTM Student Email" class="login-input" />
-    <input type="password" placeholder="Password" class="login-input" style="margin-top: 0.75rem;" />
-    
-    <button class="btn-login" @click="$emit('login-success')">Secure Login →</button>
+
+    <input type="text" v-model="email" placeholder="UTM Student Email" class="login-input" />
+    <input type="password" v-model="password" placeholder="Password" class="login-input" style="margin-top: 0.75rem;" />
+
+    <button class="btn-login" @click="handleLogin">Secure Login →</button>
   </main>
 </template>
 
 <script setup>
-defineEmits(['login-success']);
+import { ref } from 'vue';
+import api from '../api';
+
+const emit = defineEmits(['login-success']);
+
+const email = ref('');
+const password = ref('');
+
+const handleLogin = async () => {
+  if (!email.value || !password.value) {
+    alert("Please enter both your UTM email and password.");
+    return;
+  }
+
+  try {
+    const response = await api.post('/api/auth/login', {
+      email: email.value,
+      password: password.value
+    });
+
+    const token = response.data.token;
+    localStorage.setItem('jwt_token', token);
+
+    emit('login-success');
+
+  } catch (error) {
+    console.error("Login Error:", error);
+    alert("Login failed. Check your credentials.");
+  }
+};
 </script>
 
 <style scoped>
