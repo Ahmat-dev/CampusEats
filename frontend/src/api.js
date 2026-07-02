@@ -4,7 +4,7 @@ import axios from 'axios';
 const api = axios.create({
   // Note: Ask Anas for his local server URL if he is running it locally right now.
   // It usually looks something like 'http://localhost:8080' or 'http://localhost/campuseats/api'
-  baseURL: 'https://campuseats-tk0r.onrender.com',
+  baseURL: 'https://campuseats-backend-fwwt.onrender.com',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
