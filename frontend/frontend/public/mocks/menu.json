@@ -1,0 +1,51 @@
+[
+  { "id": 101, "vendor_id": 1, "name": "Nasi Lemak Ayam Regular", "description": "Fragrant coconut rice, sambal, fried egg & crispy chicken", "price": 5.50, "category": "Rice", "image_url": null, "in_stock": true },
+  { "id": 102, "vendor_id": 1, "name": "Teh Ais Kaw", "description": "Sweet iced milk tea", "price": 2.00, "category": "Drinks", "image_url": null, "in_stock": true },
+
+  { "id": 103, "vendor_id": 2, "name": "Mee Bandung", "description": "Spicy noodle soup with prawns, egg & vegetables", "price": 6.00, "category": "Noodles", "image_url": null, "in_stock": true },
+  { "id": 104, "vendor_id": 2, "name": "Mee Goreng Mamak", "description": "Wok-fried yellow noodles with a tangy spicy kick", "price": 5.50, "category": "Noodles", "image_url": null, "in_stock": true },
+  { "id": 105, "vendor_id": 2, "name": "Maggi Goreng", "description": "Stir-fried instant noodles with egg and vegetables", "price": 5.00, "category": "Noodles", "image_url": null, "in_stock": true },
+  { "id": 106, "vendor_id": 2, "name": "Fishball Soup", "description": "Light broth with fishballs and greens", "price": 4.50, "category": "Noodles", "image_url": null, "in_stock": true },
+  { "id": 107, "vendor_id": 2, "name": "Iced Lemon Tea", "description": "Refreshing chilled lemon tea", "price": 2.00, "category": "Drinks", "image_url": null, "in_stock": true },
+
+  { "id": 108, "vendor_id": 3, "name": "Grilled Chicken Chop", "description": "Grilled chicken thigh with black pepper sauce, fries & coleslaw", "price": 9.50, "category": "Western", "image_url": null, "in_stock": true },
+  { "id": 109, "vendor_id": 3, "name": "Fried Chicken Set", "description": "Crispy fried chicken with rice and gravy", "price": 7.50, "category": "Western", "image_url": null, "in_stock": true },
+  { "id": 110, "vendor_id": 3, "name": "Fish & Chips", "description": "Battered fish fillet with fries and tartar sauce", "price": 8.50, "category": "Western", "image_url": null, "in_stock": true },
+  { "id": 111, "vendor_id": 3, "name": "Beef Burger", "description": "Grilled beef patty with cheese, lettuce & special sauce", "price": 7.00, "category": "Western", "image_url": null, "in_stock": true },
+  { "id": 112, "vendor_id": 3, "name": "Iced Milo", "description": "Chocolate malt drink served cold", "price": 2.50, "category": "Drinks", "image_url": null, "in_stock": true },
+
+  { "id": 113, "vendor_id": 4, "name": "Hainanese Chicken Rice", "description": "Steamed chicken with fragrant rice & chili sauce", "price": 6.50, "category": "Rice", "image_url": null, "in_stock": true },
+  { "id": 114, "vendor_id": 4, "name": "Roasted Chicken Rice", "description": "Roasted chicken with fragrant rice", "price": 6.50, "category": "Rice", "image_url": null, "in_stock": true },
+  { "id": 115, "vendor_id": 4, "name": "Char Siew Rice", "description": "BBQ pork with rice", "price": 7.00, "category": "Rice", "image_url": null, "in_stock": false },
+  { "id": 116, "vendor_id": 4, "name": "Soy Sauce Egg", "description": "Braised egg in savory soy sauce", "price": 1.50, "category": "Snacks", "image_url": null, "in_stock": true },
+  { "id": 117, "vendor_id": 4, "name": "Chinese Tea", "description": "Traditional hot Chinese tea", "price": 1.50, "category": "Drinks", "image_url": null, "in_stock": true },
+
+  { "id": 118, "vendor_id": 5, "name": "Vegetarian Fried Rice", "description": "Fried rice with mixed vegetables and mock meat", "price": 5.00, "category": "Vegetarian", "image_url": null, "in_stock": true },
+  { "id": 119, "vendor_id": 5, "name": "Tofu & Vegetable Soup", "description": "Light soup with tofu and seasonal greens", "price": 4.50, "category": "Vegetarian", "image_url": null, "in_stock": true },
+  { "id": 120, "vendor_id": 5, "name": "Mock Meat Noodles", "description": "Stir-fried noodles with plant-based protein", "price": 5.50, "category": "Vegetarian", "image_url": null, "in_stock": true },
+  { "id": 121, "vendor_id": 5, "name": "Herbal Tea", "description": "House-brewed herbal tea", "price": 2.00, "category": "Drinks", "image_url": null, "in_stock": true },
+
+  { "id": 122, "vendor_id": 6, "name": "Brown Sugar Boba Milk", "description": "Fresh milk with brown sugar pearls", "price": 6.00, "category": "Drinks", "image_url": null, "in_stock": true },
+  { "id": 123, "vendor_id": 6, "name": "Taro Milk Tea", "description": "Creamy taro flavored milk tea", "price": 5.50, "category": "Drinks", "image_url": null, "in_stock": true },
+  { "id": 124, "vendor_id": 6, "name": "Fresh Lime Juice", "description": "Freshly squeezed lime juice", "price": 3.50, "category": "Drinks", "image_url": null, "in_stock": true },
+  { "id": 125, "vendor_id": 6, "name": "Crispy Popcorn Chicken", "description": "Bite-sized fried chicken snack", "price": 5.00, "category": "Snacks", "image_url": null, "in_stock": true },
+  { "id": 126, "vendor_id": 6, "name": "French Fries", "description": "Golden crispy fries with seasoning", "price": 4.00, "category": "Snacks", "image_url": null, "in_stock": true },
+
+  { "id": 127, "vendor_id": 7, "name": "Roti Canai", "description": "Flaky flatbread served with dhal & curry", "price": 2.00, "category": "Snacks", "image_url": null, "in_stock": true },
+  { "id": 128, "vendor_id": 7, "name": "Roti Telur", "description": "Roti canai with egg", "price": 2.50, "category": "Snacks", "image_url": null, "in_stock": true },
+  { "id": 129, "vendor_id": 7, "name": "Nasi Kandar", "description": "Steamed rice with mixed curries & sides", "price": 7.00, "category": "Rice", "image_url": null, "in_stock": true },
+  { "id": 130, "vendor_id": 7, "name": "Teh Tarik", "description": "Frothy pulled milk tea", "price": 2.20, "category": "Drinks", "image_url": null, "in_stock": true },
+  { "id": 131, "vendor_id": 7, "name": "Mee Goreng Basah", "description": "Wet-style fried noodles with gravy", "price": 5.50, "category": "Noodles", "image_url": null, "in_stock": true },
+
+  { "id": 132, "vendor_id": 8, "name": "Chicken Katsu Bento", "description": "Crispy chicken cutlet with rice & pickles", "price": 10.00, "category": "Japanese", "image_url": null, "in_stock": true },
+  { "id": 133, "vendor_id": 8, "name": "Salmon Teriyaki Bento", "description": "Grilled salmon glazed with teriyaki sauce", "price": 12.50, "category": "Japanese", "image_url": null, "in_stock": true },
+  { "id": 134, "vendor_id": 8, "name": "California Roll (8pcs)", "description": "Crab stick, cucumber & avocado sushi roll", "price": 8.00, "category": "Japanese", "image_url": null, "in_stock": true },
+  { "id": 135, "vendor_id": 8, "name": "Miso Soup", "description": "Traditional Japanese soybean soup", "price": 3.00, "category": "Japanese", "image_url": null, "in_stock": true },
+  { "id": 136, "vendor_id": 8, "name": "Green Tea", "description": "Hot or cold Japanese green tea", "price": 2.50, "category": "Drinks", "image_url": null, "in_stock": true },
+
+  { "id": 137, "vendor_id": 9, "name": "Chocolate Croissant", "description": "Buttery croissant filled with chocolate", "price": 3.50, "category": "Dessert", "image_url": null, "in_stock": true },
+  { "id": 138, "vendor_id": 9, "name": "Chocolate Chip Cookie", "description": "Freshly baked cookie", "price": 2.00, "category": "Dessert", "image_url": null, "in_stock": true },
+  { "id": 139, "vendor_id": 9, "name": "Red Velvet Cupcake", "description": "Moist cupcake with cream cheese frosting", "price": 4.00, "category": "Dessert", "image_url": null, "in_stock": true },
+  { "id": 140, "vendor_id": 9, "name": "Iced Caramel Latte", "description": "Chilled espresso with caramel and milk", "price": 5.00, "category": "Drinks", "image_url": null, "in_stock": true },
+  { "id": 141, "vendor_id": 9, "name": "Banana Bread Slice", "description": "Homemade moist banana bread", "price": 3.00, "category": "Dessert", "image_url": null, "in_stock": false }
+]
