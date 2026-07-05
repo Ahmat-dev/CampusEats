@@ -52,6 +52,4 @@ services:
       - key: APP_ENV
         value: production
       - key: CORS_ORIGIN
-        # Placeholder - update to the real Vercel URL once the frontend is deployed,
-        # then redeploy this service. Don't leave this as "*" in production.
-        value: "*"
+        value: "https://campus-eats-eight.vercel.app,capacitor://localhost"
