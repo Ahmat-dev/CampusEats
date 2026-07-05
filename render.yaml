@@ -1,0 +1,57 @@
+services:
+  - name: campuseats-mysql
+    type: pserv
+    runtime: image
+    plan: starter
+    image:
+      url: docker.io/library/mysql:8.0
+    disk:
+      name: campuseats-mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+    envVars:
+      - key: MYSQL_DATABASE
+        value: campuseats
+      - key: MYSQL_USER
+        value: campuseats
+      - key: MYSQL_PASSWORD
+        generateValue: true
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+
+  - name: campuseats-backend
+    type: web
+    runtime: docker
+    plan: starter
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DB_HOST
+        fromService:
+          name: campuseats-mysql
+          type: pserv
+          property: host
+      - key: DB_PORT
+        fromService:
+          name: campuseats-mysql
+          type: pserv
+          property: port
+      - key: DB_NAME
+        value: campuseats
+      - key: DB_USER
+        value: campuseats
+      - key: DB_PASS
+        fromService:
+          name: campuseats-mysql
+          type: pserv
+          envVarKey: MYSQL_PASSWORD
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_TTL
+        value: 86400
+      - key: APP_ENV
+        value: production
+      - key: CORS_ORIGIN
+        # Placeholder - update to the real Vercel URL once the frontend is deployed,
+        # then redeploy this service. Don't leave this as "*" in production.
+        value: "*"
