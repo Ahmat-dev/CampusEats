@@ -1,79 +1,256 @@
 <template>
-  <main style="padding: 1rem; flex: 1; display: flex; flex-direction: column; box-sizing: border-box;">
-    <button class="btn-back" @click="$emit('go-back')">← Change Cafe Counter</button>
+  <main class="menu-screen">
+    <RouterLink to="/vendors" class="btn-back">← Change stall</RouterLink>
 
-    <div style="background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%); border: 1px solid #e5e7eb; border-radius: 1rem; padding: 1rem; margin-bottom: 1.25rem; box-sizing: border-box;">
-      <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1.1rem;">
-        <span>{{ vendor?.name }}</span>
-        <span style="color: #d97706; font-size: 0.95rem;">⭐ {{ vendor?.rating }}</span>
-      </div>
-      <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.35rem;">
-        📍 {{ vendor?.location }} | ⏱️ Prep Time: {{ vendor?.wait_time }}
-      </div>
-    </div>
+    <AppAlert v-if="errorMessage">{{ errorMessage }}</AppAlert>
 
-    <div style="margin-bottom: 1.25rem;">
-      <input type="text" v-model="searchQuery" placeholder="Search dishes, drinks..." class="search-input">
-      <div class="pill-container">
-        <button v-for="cat in categories" :key="cat" @click="activeCategory = cat" :class="['pill', activeCategory === cat ? 'active' : '']">
-          {{ cat }}
-        </button>
-      </div>
-    </div>
-
-    <div style="flex: 1; padding-bottom: 5rem;">
-      <h3 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; font-weight: 700; color: #374151;">Menu Items</h3>
-      <div v-for="item in filteredMenuItems" :key="item.id" class="menu-card">
-        <div>
-          <div style="font-weight: 600; color: #111827; font-size: 0.9rem;">{{ item.name }}</div>
-          <div style="font-size: 0.75rem; color: #6b7280; margin: 0.15rem 0 0.35rem 0;">{{ item.description }}</div>
-          <div style="color: #059669; font-weight: 700; font-size: 0.9rem;">RM {{ item.price.toFixed(2) }}</div>
+    <template v-if="vendor">
+      <div class="vendor-hero">
+        <FoodImage :src="vendor.image_url" :name="vendor.name" class="vendor-hero-img" />
+        <div class="vendor-hero-info">
+          <h2 class="vendor-hero-name">{{ vendor.name }}</h2>
+          <div class="vendor-hero-meta">
+            <span>⭐ {{ vendor.rating ?? 'New' }}</span>
+            <span>·</span>
+            <span>⏱️ {{ vendor.prep_time_mins ? `${vendor.prep_time_mins} min` : 'N/A' }}</span>
+          </div>
+          <p class="vendor-hero-location">📍 {{ vendor.location }}</p>
         </div>
-        <button class="btn-add" @click="cartStore.addToCart(item)">+ Add</button>
       </div>
-    </div>
 
-    <div class="checkout-floating-bar" v-if="cartStore.totalCount > 0">
-      <button class="btn-confirm" @click="$emit('go-checkout')" style="margin-top: 0;">
-        Review Order Basket ({{ cartStore.totalCount }} items) →
-      </button>
-    </div>
+      <div class="menu-controls">
+        <AppInput v-model="searchQuery" placeholder="Search dishes, drinks..." icon="🔍" />
+        <PillTabs v-model="activeCategory" :options="categoryOptions" class="category-row" />
+      </div>
+
+      <div class="menu-items">
+        <EmptyState v-if="filteredMenuItems.length === 0" icon="🔎" title="No items match" subtitle="Try another search term or category." />
+
+        <div v-for="item in filteredMenuItems" :key="item.id" class="menu-card">
+          <FoodImage :src="item.image_url" :name="item.name" emoji="🍴" class="menu-thumb" />
+          <div class="menu-card-body">
+            <div class="menu-card-name">{{ item.name }}</div>
+            <div class="menu-card-desc">{{ item.description }}</div>
+            <div class="menu-card-price">RM {{ item.price.toFixed(2) }}</div>
+          </div>
+          <div class="menu-card-action">
+            <QtyStepper v-if="item.in_stock && qtyOf(item.id) > 0" size="sm" :qty="qtyOf(item.id)" @increase="handleAdd(item)" @decrease="cartStore.removeOne(item.id)" />
+            <AppButton v-else-if="item.in_stock" size="sm" @click="handleAdd(item)">+ Add</AppButton>
+            <span v-else class="sold-out">Sold out</span>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div class="cart-spacer" v-if="cartStore.totalCount > 0" />
+    <RouterLink v-if="cartStore.totalCount > 0" to="/checkout" class="floating-cart-bar">
+      <span class="floating-cart-count">{{ cartStore.totalCount }} item{{ cartStore.totalCount > 1 ? 's' : '' }}</span>
+      <span class="floating-cart-label">View basket</span>
+      <span class="floating-cart-total">RM {{ cartStore.cartTotal }}</span>
+    </RouterLink>
   </main>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useCartStore } from '../stores/cart';
+import { ref, computed, onMounted, watch } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { getVendor, getMenuItems, ApiError } from '@/api/client'
+import { useCartStore } from '@/stores/cart'
+import { useAuthStore } from '@/stores/auth'
+import AppInput from '@/components/AppInput.vue'
+import AppAlert from '@/components/AppAlert.vue'
+import AppButton from '@/components/AppButton.vue'
+import PillTabs from '@/components/PillTabs.vue'
+import EmptyState from '@/components/EmptyState.vue'
+import FoodImage from '@/components/FoodImage.vue'
+import QtyStepper from '@/components/QtyStepper.vue'
 
-const props = defineProps({
-  vendor: Object,
-  menuItems: Array
-});
-defineEmits(['go-back', 'go-checkout']);
+const route = useRoute()
+const router = useRouter()
+const cartStore = useCartStore()
+const auth = useAuthStore()
 
-const cartStore = useCartStore();
-const searchQuery = ref('');
-const activeCategory = ref('All');
-const categories = ref(['All', 'Rice', 'Noodles', 'Drinks', 'Snacks']);
+const vendor = ref(null)
+const menuItems = ref([])
+const errorMessage = ref('')
+const searchQuery = ref('')
+const activeCategory = ref('All')
+
+const categoryOptions = computed(() => [
+  { label: 'All', value: 'All' },
+  ...[...new Set(menuItems.value.map((item) => item.category))].map((c) => ({ label: c, value: c })),
+])
 
 const filteredMenuItems = computed(() => {
-  return props.menuItems.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.value.toLowerCase());
-    const matchesCategory = activeCategory.value === 'All' || item.category === activeCategory.value;
-    return matchesSearch && matchesCategory;
-  });
-});
+  return menuItems.value.filter((item) => {
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchesCategory = activeCategory.value === 'All' || item.category === activeCategory.value
+    return matchesSearch && matchesCategory
+  })
+})
+
+function qtyOf(itemId) {
+  return cartStore.items.find((i) => i.id === itemId)?.qty ?? 0
+}
+
+function handleAdd(item) {
+  if (!auth.isAuthenticated) {
+    router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+  cartStore.addToCart(item)
+}
+
+async function loadVendor(vendorId) {
+  errorMessage.value = ''
+
+  try {
+    const [vendorData, items] = await Promise.all([getVendor(vendorId), getMenuItems(vendorId)])
+    vendor.value = vendorData
+    menuItems.value = items
+    cartStore.setVendor(vendorData.id, vendorData.name)
+  } catch (e) {
+    errorMessage.value = e instanceof ApiError ? e.message : 'Could not load this vendor.'
+  }
+}
+
+onMounted(() => loadVendor(route.params.id))
+watch(() => route.params.id, (id) => loadVendor(id))
 </script>
 
 <style scoped>
-.search-input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.75rem; box-sizing: border-box; font-size: 0.875rem; outline: none; }
-.search-input:focus { border-color: #059669; }
-.pill-container { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; margin-top: 0.75rem; }
-.pill { background: #f9fafb; border: 1px solid #e5e7eb; padding: 0.375rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; color: #4b5563; cursor: pointer; white-space: nowrap; }
-.pill.active { background: #059669; color: white; border-color: #059669; }
-.menu-card { border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; background: white; box-sizing: border-box; }
-.btn-add { background: #059669; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.75rem; cursor: pointer; }
-.btn-back { background: #f3f4f6; color: #4b5563; border: none; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem; display: inline-flex; align-items: center; gap: 0.25rem; }
-.btn-confirm { background: #059669; color: white; width: 100%; border: none; padding: 1rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: bold; cursor: pointer; text-align: center; box-sizing: border-box; }
-.checkout-floating-bar { position: sticky; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #e5e7eb; padding: 1rem; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.05); box-sizing: border-box; }
+.menu-screen {
+  padding: 1rem 1.25rem 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.vendor-hero {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+.vendor-hero-img {
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.4rem;
+}
+.vendor-hero-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+.vendor-hero-meta {
+  display: flex;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  font-weight: 700;
+  margin-top: 0.3rem;
+}
+.vendor-hero-location {
+  margin: 0.3rem 0 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+.menu-controls {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.menu-items {
+  flex: 1;
+}
+.menu-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  margin-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-surface);
+}
+.menu-thumb {
+  width: 3.4rem;
+  height: 3.4rem;
+  font-size: 1.15rem;
+}
+.menu-card-body {
+  flex: 1;
+  min-width: 0;
+}
+.menu-card-name {
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: 0.88rem;
+}
+.menu-card-desc {
+  font-size: 0.74rem;
+  color: var(--color-text-secondary);
+  margin: 0.15rem 0 0.35rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.menu-card-price {
+  color: var(--color-primary-dark);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+.menu-card-action {
+  flex-shrink: 0;
+}
+.sold-out {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-text-tertiary);
+}
+.cart-spacer {
+  height: 9rem;
+}
+.floating-cart-bar {
+  position: fixed;
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: calc(var(--bottom-nav-height) + 0.75rem);
+  max-width: calc(var(--app-width) - 2.5rem);
+  margin: 0 auto;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  box-shadow: 0 12px 28px rgba(13, 127, 95, 0.35);
+  z-index: 30;
+}
+.floating-cart-count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+}
+.floating-cart-label {
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+.floating-cart-total {
+  font-weight: 800;
+  font-size: 0.9rem;
+}
 </style>

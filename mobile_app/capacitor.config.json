@@ -1,9 +1,0 @@
-{
-  "appId": "com.solvenexify.campuseats",
-  "appName": "CampusEats",
-  "webDir": "../frontend/dist",
-  "server": {
-    "cleartext": true,
-    "androidScheme": "http"
-  }
-}

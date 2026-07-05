@@ -1,53 +1,61 @@
-/* color palette from <https://github.com/vuejs/theme> */
+/* CampusEats design tokens — Warm Minimal */
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+  /* layout: cap the app at real phone width so the web app renders as the
+     same mobile UI as the native app, instead of a wide desktop column */
+  --app-width: 480px;
+  /* rendered height of the bottom tab bar — any fixed/sticky element that also
+     anchors to the bottom of the screen (floating cart bar, confirm button)
+     must offset by at least this much or it renders underneath the tab bar */
+  --bottom-nav-height: 4.75rem;
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  /* surfaces */
+  --color-bg: #faf7f2;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f4efe6;
 
-  --vt-c-indigo: #2c3e50;
+  /* text */
+  --color-text: #1c1917;
+  --color-text-secondary: #6b6560;
+  --color-text-tertiary: #a39d95;
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  /* borders */
+  --color-border: #eae2d5;
+  --color-border-strong: #ddd3c2;
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
-}
+  /* brand */
+  --color-primary: #0d7f5f;
+  --color-primary-dark: #0a6249;
+  --color-primary-light: #e4f3ec;
+  --color-accent: #c1622d;
+  --color-accent-light: #fbede1;
 
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+  /* status */
+  --color-warning: #b45309;
+  --color-warning-bg: #fef3c7;
+  --color-info: #1d4ed8;
+  --color-info-bg: #dbeafe;
+  --color-success: #0a6249;
+  --color-success-bg: #d7ede4;
+  --color-danger: #b91c1c;
+  --color-danger-bg: #fbe7e7;
+  --color-neutral: #57534e;
+  --color-neutral-bg: #ece7de;
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+  /* radius */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  /* shadow */
+  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
+  --shadow-md: 0 6px 20px rgba(28, 25, 23, 0.07);
+  --shadow-lg: 0 16px 40px rgba(28, 25, 23, 0.12);
 
-  --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
+  /* type */
+  --font-heading: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 *,
@@ -55,32 +63,38 @@
 *::after {
   box-sizing: border-box;
   margin: 0;
-  font-weight: normal;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   min-height: 100vh;
   color: var(--color-text);
-  background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
-  line-height: 1.6;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
+  background: var(--color-bg);
+  line-height: 1.5;
+  font-family: var(--font-body);
   font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+button {
+  font-family: var(--font-body);
 }
