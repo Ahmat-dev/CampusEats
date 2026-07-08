@@ -33,6 +33,42 @@ class AdminController
         return Response::ok($response, $vendors);
     }
 
+    public function allVendors(Request $request, PsrResponse $response): PsrResponse
+    {
+        $vendors = array_map(static fn (array $v) => [
+            'id' => (int) $v['id'],
+            'owner_id' => $v['owner_id'] ? (int) $v['owner_id'] : null,
+            'name' => $v['name'],
+            'location' => $v['location'],
+            'status' => $v['status'],
+            'is_active' => (bool) $v['is_active'],
+            'created_at' => $v['created_at'],
+        ], $this->vendors->findAll());
+
+        return Response::ok($response, $vendors);
+    }
+
+    public function suspendVendor(Request $request, PsrResponse $response, array $args): PsrResponse
+    {
+        $vendor = $this->vendors->findById((int) $args['id']);
+
+        if ($vendor === null) {
+            return Response::error($response, 'Vendor not found.', 404);
+        }
+
+        $body = (array) $request->getParsedBody();
+
+        try {
+            v::key('is_active', v::boolType())->assert($body);
+        } catch (NestedValidationException $e) {
+            return Response::error($response, 'Validation failed.', 422, $e->getMessages());
+        }
+
+        $this->vendors->update((int) $args['id'], ['is_active' => $body['is_active'] ? 1 : 0]);
+
+        return Response::ok($response, ['id' => (int) $args['id'], 'is_active' => $body['is_active']]);
+    }
+
     public function approveVendor(Request $request, PsrResponse $response, array $args): PsrResponse
     {
         $vendor = $this->vendors->findById((int) $args['id']);

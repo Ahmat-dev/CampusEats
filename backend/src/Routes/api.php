@@ -79,10 +79,16 @@ return function (App $app): void {
         ->add(JwtAuthMiddleware::class);
 
     // Admin
+    $app->get('/api/admin/vendors', [AdminController::class, 'allVendors'])
+        ->add($role(['admin']))
+        ->add(JwtAuthMiddleware::class);
     $app->get('/api/admin/vendors/pending', [AdminController::class, 'pendingVendors'])
         ->add($role(['admin']))
         ->add(JwtAuthMiddleware::class);
     $app->patch('/api/admin/vendors/{id}/approve', [AdminController::class, 'approveVendor'])
+        ->add($role(['admin']))
+        ->add(JwtAuthMiddleware::class);
+    $app->patch('/api/admin/vendors/{id}/suspend', [AdminController::class, 'suspendVendor'])
         ->add($role(['admin']))
         ->add(JwtAuthMiddleware::class);
     $app->get('/api/admin/analytics/summary', [AdminController::class, 'analyticsSummary'])

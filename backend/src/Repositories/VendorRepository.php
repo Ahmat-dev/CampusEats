@@ -83,6 +83,13 @@ class VendorRepository
         return $stmt->fetchAll();
     }
 
+    public function findAll(): array
+    {
+        $stmt = $this->db->query('SELECT * FROM vendors ORDER BY created_at DESC');
+
+        return $stmt->fetchAll();
+    }
+
     public function create(
         int $ownerId,
         string $name,
