@@ -15,13 +15,13 @@ class VendorRepository
     /** Public listing: approved + active vendors only, with computed rating. */
     public function listApproved(?string $search = null): array
     {
-        $sql = 'SELECT v.id, v.name, v.location, v.opening_hours, v.image_url, v.prep_time_mins,
+        $sql = "SELECT v.id, v.name, v.location, v.opening_hours, v.image_url, v.prep_time_mins,
                        v.is_active, v.status,
                        ROUND(AVG(r.rating), 1) AS rating,
                        COUNT(r.id) AS review_count
                 FROM vendors v
                 LEFT JOIN reviews r ON r.vendor_id = v.id
-                WHERE v.status = 'approved' AND v.is_active = 1';
+                WHERE v.status = 'approved' AND v.is_active = 1";
 
         $params = [];
 
@@ -41,14 +41,14 @@ class VendorRepository
     public function findApprovedById(int $id): ?array
     {
         $stmt = $this->db->prepare(
-            'SELECT v.id, v.name, v.location, v.opening_hours, v.image_url, v.prep_time_mins,
+            "SELECT v.id, v.name, v.location, v.opening_hours, v.image_url, v.prep_time_mins,
                     v.is_active, v.status,
                     ROUND(AVG(r.rating), 1) AS rating,
                     COUNT(r.id) AS review_count
              FROM vendors v
              LEFT JOIN reviews r ON r.vendor_id = v.id
              WHERE v.id = :id AND v.status = 'approved' AND v.is_active = 1
-             GROUP BY v.id'
+             GROUP BY v.id"
         );
         $stmt->execute(['id' => $id]);
 
@@ -92,8 +92,8 @@ class VendorRepository
         ?int $prepTimeMins
     ): int {
         $stmt = $this->db->prepare(
-            'INSERT INTO vendors (owner_id, name, location, opening_hours, image_url, prep_time_mins, is_active, status)
-             VALUES (:owner_id, :name, :location, :opening_hours, :image_url, :prep_time_mins, 1, 'pending')'
+            "INSERT INTO vendors (owner_id, name, location, opening_hours, image_url, prep_time_mins, is_active, status)
+             VALUES (:owner_id, :name, :location, :opening_hours, :image_url, :prep_time_mins, 1, 'pending')"
         );
 
         $stmt->execute([
