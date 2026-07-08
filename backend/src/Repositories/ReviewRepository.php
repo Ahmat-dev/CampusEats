@@ -45,7 +45,7 @@ class ReviewRepository
     public function hasCollectedOrder(int $userId, int $vendorId): bool
     {
         $stmt = $this->db->prepare(
-            'SELECT 1 FROM orders WHERE user_id = :user_id AND vendor_id = :vendor_id AND status = "collected" LIMIT 1'
+            "SELECT 1 FROM orders WHERE user_id = :user_id AND vendor_id = :vendor_id AND status = 'collected' LIMIT 1"
         );
         $stmt->execute(['user_id' => $userId, 'vendor_id' => $vendorId]);
 
