@@ -21,7 +21,7 @@ class VendorRepository
                        COUNT(r.id) AS review_count
                 FROM vendors v
                 LEFT JOIN reviews r ON r.vendor_id = v.id
-                WHERE v.status = "approved" AND v.is_active = 1';
+                WHERE v.status = 'approved' AND v.is_active = 1';
 
         $params = [];
 
@@ -47,7 +47,7 @@ class VendorRepository
                     COUNT(r.id) AS review_count
              FROM vendors v
              LEFT JOIN reviews r ON r.vendor_id = v.id
-             WHERE v.id = :id AND v.status = "approved" AND v.is_active = 1
+             WHERE v.id = :id AND v.status = 'approved' AND v.is_active = 1
              GROUP BY v.id'
         );
         $stmt->execute(['id' => $id]);
@@ -78,7 +78,7 @@ class VendorRepository
 
     public function findPending(): array
     {
-        $stmt = $this->db->query('SELECT * FROM vendors WHERE status = "pending" ORDER BY created_at ASC');
+        $stmt = $this->db->query("SELECT * FROM vendors WHERE status = 'pending' ORDER BY created_at ASC");
 
         return $stmt->fetchAll();
     }
@@ -93,7 +93,7 @@ class VendorRepository
     ): int {
         $stmt = $this->db->prepare(
             'INSERT INTO vendors (owner_id, name, location, opening_hours, image_url, prep_time_mins, is_active, status)
-             VALUES (:owner_id, :name, :location, :opening_hours, :image_url, :prep_time_mins, 1, "pending")'
+             VALUES (:owner_id, :name, :location, :opening_hours, :image_url, :prep_time_mins, 1, 'pending')'
         );
 
         $stmt->execute([

@@ -16,7 +16,7 @@ class OrderRepository
     {
         $stmt = $this->db->prepare(
             'INSERT INTO orders (user_id, vendor_id, status, total, pickup_at)
-             VALUES (:user_id, :vendor_id, "placed", :total, :pickup_at)'
+             VALUES (:user_id, :vendor_id, 'placed', :total, :pickup_at)'
         );
 
         $stmt->execute([
